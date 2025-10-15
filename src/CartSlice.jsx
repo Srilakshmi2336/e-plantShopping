@@ -1,41 +1,44 @@
-import { createSlice } from '@reduxjs/toolkit';
+// src/CartSlice.jsx
+import { createSlice } from "@reduxjs/toolkit";
 
-const initialState ={
-    items:[];
+// Initial state
+const initialState = {
+  items: []
 };
 
-const cartSlice=createSlice({
-    name:"cart",
-    initialState,
-    reducers:{
-        addItem:(state,action)=>{
-            const newItem=action.payload;
-            const existingItem=state.items.find(
-                (item) =>item.name===newItem.name
-            );
-            if (existingItem) {
-        existingItem.quantity += 1;
-      } else {
-        state.items.push({ ...newItem, quantity: 1 });
+// Create the cart slice
+const cartSlice = createSlice({
+  name: "cart",
+  initialState,
+  reducers: {
+    // Add a new item to the cart
+    addItem: (state, action) => {
+      const item = action.payload;
+      const existingItem = state.items.find(i => i.name === item.name);
+      if (!existingItem) {
+        state.items.push({ ...item, quantity: 1 });
       }
     },
+
+    // Remove an item from the cart by name
     removeItem: (state, action) => {
-      const nameToRemove = action.payload;
-      state.items = state.items.filter((item) => item.name !== nameToRemove);
+      const name = action.payload;
+      state.items = state.items.filter(item => item.name !== name);
     },
 
-     updateQuantity: (state, action) => {
-      const { name, amount } = action.payload;
-      const itemToUpdate = state.items.find((item) => item.name === name);
-      if (itemToUpdate) {
-        itemToUpdate.quantity = amount;
+    // Update quantity of an existing item
+    updateQuantity: (state, action) => {
+      const { name, quantity } = action.payload;
+      const item = state.items.find(i => i.name === name);
+      if (item) {
+        item.quantity = quantity;
       }
-    },
-        }
     }
-)
+  }
+});
 
+// Export action creators
+export const { addItem, removeItem, updateQuantity } = cartSlice.actions;
 
-export const { addItem, removeItem, updateQuantity } = CartSlice.actions;
-
-export default CartSlice.reducer;
+// Export the reducer to use in store.js
+export default cartSlice.reducer;
